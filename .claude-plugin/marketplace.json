@@ -8,6 +8,18 @@
   },
   "plugins": [
     {
+      "name": "cc-plus",
+      "description": "Quality-of-life enhancements for Claude Code",
+      "category": "development",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/wegotoeleven/claude-plugins.git",
+        "path": "cc-plus",
+        "ref": "main"
+      },
+      "homepage": "https://github.com/wegotoeleven/claude-plugins"
+    },
+    {
       "name": "repo-kit",
       "description": "A collection of skills for fleshing out and maintaining git repositories",
       "category": "development",
