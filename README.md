@@ -6,7 +6,17 @@ Each plugin lives in its own subdirectory. The marketplace is registered at `.cl
 
 ## Plugins
 
+### cc-plus
+
+Quality-of-life enhancements for Claude Code.
+
+| Skill | Description |
+|---|---|
+| `delete-session` | Selectively delete Claude Code session history files from disk |
+
 ### repo-kit
+
+Skills for fleshing out and maintaining git repositories.
 
 | Skill | Description |
 |---|---|
@@ -25,6 +35,14 @@ Each plugin lives in its own subdirectory. The marketplace is registered at `.cl
 ```
 
 ## Usage
+
+### delete-session
+
+List and delete session histories for the current project:
+
+```
+/cc-plus:delete-session
+```
 
 ### bash-tidy
 
