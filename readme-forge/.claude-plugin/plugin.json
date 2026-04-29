@@ -1,0 +1,8 @@
+{
+  "name": "readme-forge",
+  "description": "Generate a well-structured README.md for a Git repository by analysing its code and structure",
+  "author": {
+    "name": "wegotoeleven",
+    "email": "me@wegotoeleven.xyz"
+  }
+}
