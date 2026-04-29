@@ -17,6 +17,17 @@
         "path": "bash-tidy"
       },
       "homepage": "https://github.com/wegotoeleven/claude-plugins"
+    },
+    {
+      "name": "readme-forge",
+      "description": "Generate a well-structured README.md for a Git repository by analysing its code and structure",
+      "category": "documentation",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/wegotoeleven/claude-plugins.git",
+        "path": "readme-forge"
+      },
+      "homepage": "https://github.com/wegotoeleven/claude-plugins"
     }
   ]
 }
