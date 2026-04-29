@@ -1,0 +1,22 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "wegotoeleven-claude-plugins",
+  "description": "Personal Claude Code plugins",
+  "owner": {
+    "name": "wegotoeleven",
+    "email": "me@wegotoeleven.xyz"
+  },
+  "plugins": [
+    {
+      "name": "bash-tidy",
+      "description": "Refactor bash scripts to conform to the house style guide",
+      "category": "development",
+      "source": {
+        "source": "git-subdir",
+        "url": "https://github.com/wegotoeleven/claude-plugins.git",
+        "path": "bash-tidy"
+      },
+      "homepage": "https://github.com/wegotoeleven/claude-plugins"
+    }
+  ]
+}
