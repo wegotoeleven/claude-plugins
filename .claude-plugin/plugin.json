@@ -1,6 +1,6 @@
 {
-  "name": "bash-tidy",
-  "description": "Refactor bash scripts to conform to the house style guide",
+  "name": "wegotoeleven-plugins",
+  "description": "Personal Claude Code skills and tools",
   "author": {
     "name": "wegotoeleven",
     "email": "me@wegotoeleven.xyz"
