@@ -14,7 +14,7 @@ allowed-tools:
 
 1. List sessions for the current project by running:
    ```
-   python3 "${CLAUDE_SKILL_DIR}/scripts/list_sessions.py" "$(pwd)"
+   python3 "${CLAUDE_SKILL_DIR}/scripts/list_sessions.py"
    ```
    The output is JSON: an array of objects with `session_id`, `display` (slug or first user message), `timestamp`, `last_active`, and `size_kb`. Sessions are sorted by `last_active` descending (most recently active first).
 
@@ -24,7 +24,7 @@ allowed-tools:
 
 4. For the selected session, run a dry run to show what would be deleted:
    ```
-   python3 "${CLAUDE_SKILL_DIR}/scripts/delete_session.py" "$(pwd)" "<session_id>" --dry-run
+   python3 "${CLAUDE_SKILL_DIR}/scripts/delete_session.py" "<session_id>" --dry-run
    ```
    Present the `targets` list to the user, showing only items where `exists` is true. Also show the `history_entries` count.
 
@@ -32,7 +32,7 @@ allowed-tools:
 
 6. Run the actual deletion:
    ```
-   python3 "${CLAUDE_SKILL_DIR}/scripts/delete_session.py" "$(pwd)" "<session_id>"
+   python3 "${CLAUDE_SKILL_DIR}/scripts/delete_session.py" "<session_id>"
    ```
 
 7. Report what was deleted. If there were errors, report those too.

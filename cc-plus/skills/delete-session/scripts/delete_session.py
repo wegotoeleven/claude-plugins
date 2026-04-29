@@ -21,13 +21,20 @@ def count_history_entries(jsonl_path):
 
 
 def main():
-    if len(sys.argv) < 3:
-        print(json.dumps({'error': 'Usage: delete_session.py <project_path> <session_id> [--dry-run]'}))
+    args = [a for a in sys.argv[1:] if not a.startswith('--')]
+    flags = [a for a in sys.argv[1:] if a.startswith('--')]
+
+    if len(args) == 1:
+        project_path = os.getcwd()
+        session_id = args[0]
+    elif len(args) == 2:
+        project_path = args[0]
+        session_id = args[1]
+    else:
+        print(json.dumps({'error': 'Usage: delete_session.py [<project_path>] <session_id> [--dry-run]'}))
         sys.exit(1)
 
-    project_path = sys.argv[1]
-    session_id = sys.argv[2]
-    dry_run = '--dry-run' in sys.argv
+    dry_run = '--dry-run' in flags
 
     project_dir = Path.home() / '.claude' / 'projects' / path_to_project_dir(project_path)
     jsonl_file = project_dir / f'{session_id}.jsonl'

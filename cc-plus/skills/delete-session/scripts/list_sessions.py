@@ -69,11 +69,7 @@ def format_timestamp(ts):
 
 
 def main():
-    if len(sys.argv) < 2:
-        print(json.dumps({'error': 'Usage: list_sessions.py <project_path>'}))
-        sys.exit(1)
-
-    project_path = sys.argv[1]
+    project_path = sys.argv[1] if len(sys.argv) >= 2 else os.getcwd()
     project_dir = Path.home() / '.claude' / 'projects' / path_to_project_dir(project_path)
 
     if not project_dir.exists():
