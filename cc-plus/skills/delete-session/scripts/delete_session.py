@@ -3,13 +3,14 @@
 
 import json
 import os
+import re
 import shutil
 import sys
 from pathlib import Path
 
 
 def path_to_project_dir(project_path):
-    return project_path.replace('/', '-')
+    return re.sub(r'[^a-zA-Z0-9]', '-', project_path)
 
 
 def count_history_entries(jsonl_path):
