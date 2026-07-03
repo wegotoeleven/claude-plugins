@@ -1,8 +1,10 @@
 {
   "name": "repo-kit",
+  "version": "1.0.0",
   "description": "A collection of skills for fleshing out and maintaining git repositories",
   "author": {
     "name": "wegotoeleven",
     "email": "me@wegotoeleven.xyz"
-  }
+  },
+  "keywords": ["git", "repository", "bash", "readme", "documentation"]
 }
