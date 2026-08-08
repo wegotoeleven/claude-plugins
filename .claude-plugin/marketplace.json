@@ -20,6 +20,13 @@
       "category": "development",
       "source": "./repo-kit",
       "homepage": "https://github.com/wegotoeleven/claude-plugins"
+    },
+    {
+      "name": "blog-kit",
+      "description": "Turn rough notes into a finished blog post in your own voice, and publish it",
+      "category": "productivity",
+      "source": "./blog-kit",
+      "homepage": "https://github.com/wegotoeleven/claude-plugins"
     }
   ]
 }

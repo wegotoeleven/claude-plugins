@@ -1,0 +1,10 @@
+{
+  "name": "blog-kit",
+  "version": "1.0.0",
+  "description": "Turn rough notes into a finished blog post in your own voice, and publish it",
+  "author": {
+    "name": "wegotoeleven",
+    "email": "me@wegotoeleven.xyz"
+  },
+  "keywords": ["blog", "writing", "hugo", "publishing"]
+}
