@@ -15,69 +15,83 @@ started in (`~/.claude/projects/<mangled-path>/`), not off the repository
 itself. Moving, renaming, or relocating a project directory (e.g. onto a
 different volume) leaves old sessions invisible to `/resume` from the new
 path, even though the transcripts still exist under the old one. This skill
-copies a session's transcript (and its associated file directory, if any)
-from the old project path's directory into the new one's.
+copies one or more sessions' transcripts (and their associated file
+directories, if any) from wherever they currently live into the **current**
+project directory.
 
-Copies, never moves: the source is left untouched, so this is safe to
-re-run and can't destroy the original transcript.
+Copies, never moves: sources are left untouched, so this is safe to re-run
+and can't destroy an original transcript.
 
-**The session being migrated must not be the live session running this
+**A session being migrated must not be the live session running this
 skill.** The transcript file is written continuously while a session is
 open, so copying it mid-session captures a snapshot and misses everything
 written after the copy — including, ironically, the copy command itself.
-If the session the user wants to migrate is the one currently running,
-tell them to end it (exit or close the terminal/tab) and run this skill
-again from a different session afterward, rather than copying now.
+If the user selects the session currently running this skill, drop it from
+the batch and tell them to migrate it separately after ending this session
+(exit or close the terminal/tab), running this skill again from another
+session afterward.
 
 ## Steps
 
-1. Determine the **old project path** — the directory the session was
-   originally started in. Ask the user for it in plain text if it isn't
-   already clear from the conversation.
+1. List every session on the machine using the script shared with
+   `delete-session`:
+   ```
+   python3 "${CLAUDE_SKILL_DIR}/../../scripts/list_sessions.py" --all
+   ```
+   The output is JSON: an array of session objects with `session_id`,
+   `display` (name), `created`, `last_edited`, `folder_size` (total size of
+   the sessions in that project's folder), `folder` (the project's
+   working-directory path), `project_dir` (the actual
+   `~/.claude/projects/<slug>` path on disk), and `is_current_folder`
+   (true when the session already belongs to the directory this skill is
+   running from). Sessions are sorted by `created` ascending (oldest
+   first).
 
-2. List sessions for that path by running:
-   ```
-   python3 "${CLAUDE_SKILL_DIR}/scripts/list_sessions.py" "<old_project_path>"
-   ```
-   The output is JSON: an array of objects with `session_id`, `display`
-   (slug or first user message), `timestamp`, `last_active`, and
-   `size_kb`, sorted by `last_active` descending.
+2. Present the sessions to the user as a single numbered table, oldest
+   first, with columns `#`, `Created`, `Last Edited`, `Name`, `Location`,
+   `Folder Size`. For `Location`, use "current folder" (or similar wording)
+   when `is_current_folder` is true, otherwise show the `folder` path. Keep
+   `session_id` and `project_dir` out of the printed table but keep them
+   mapped to each row number internally, since you need both to run the
+   migration script.
 
-3. Present the sessions as a numbered table with columns: #, Last Active,
-   Display, Size. Ask the user which session to migrate in plain text — do
-   NOT use AskUserQuestion here, since the option set is dynamic. If the
-   selected session's ID matches the session currently running this skill,
-   stop and tell the user to end this session first and re-run the skill
-   from another one — see the warning above.
+3. Ask the user which sessions to migrate in plain text, e.g. "Which
+   sessions should I migrate here? Give me the row numbers,
+   comma-separated." Do NOT use AskUserQuestion for this: with more than a
+   handful of sessions the list will exceed AskUserQuestion's 4-option
+   limit. Accept multiple row numbers.
 
-4. Determine the **new project path** — the directory the user now works
-   from (and will run `claude` from). Default to the current working
-   directory if the skill is being run from there, but confirm it with the
-   user rather than assuming, since a wrong path just makes the session
-   invisible under a different name.
+4. Validate the selection before doing anything:
+   - Drop any row already marked `is_current_folder: true` and tell the
+     user it's already here, nothing to do.
+   - If any selected row's `session_id` matches the session currently
+     running this skill, drop it from the batch and warn the user per the
+     note above.
+   - If nothing is left to migrate after these checks, stop here.
 
-5. Run a dry run to preview what would be copied:
+5. For each remaining selected session, run a dry run to preview what
+   would be copied, passing that row's `project_dir` as the source:
    ```
-   python3 "${CLAUDE_SKILL_DIR}/scripts/migrate_session.py" "<old_project_path>" "<new_project_path>" "<session_id>" --dry-run
+   python3 "${CLAUDE_SKILL_DIR}/scripts/migrate_session.py" "<session_id>" --old-project-dir "<project_dir>" --dry-run
    ```
-   Show the user the source and destination paths and the transcript size.
-   If any `dest_exists` is `true`, flag it clearly — the copy will
-   overwrite a same-named file already at the destination.
+   `--new-project-path` defaults to the current working directory; only
+   pass it explicitly if the user wants to migrate somewhere other than
+   where this skill is running. Show the user the source and destination
+   paths and the transcript size for each. If any `dest_exists` is `true`,
+   flag it clearly — the copy will overwrite a same-named file already at
+   the destination.
 
-6. Confirm with AskUserQuestion: "This will copy the session to the new
-   project directory. Proceed?"
+6. Confirm with AskUserQuestion: "This will copy N session(s) into the
+   current project directory. Proceed?"
 
-7. Run the actual copy:
+7. Run the actual copy for each confirmed session:
    ```
-   python3 "${CLAUDE_SKILL_DIR}/scripts/migrate_session.py" "<old_project_path>" "<new_project_path>" "<session_id>"
+   python3 "${CLAUDE_SKILL_DIR}/scripts/migrate_session.py" "<session_id>" --old-project-dir "<project_dir>"
    ```
 
-8. Report what was copied and that the original is untouched at its
-   original path. Tell the user how to pick it up:
-   ```
-   cd <new_project_path> && claude
-   ```
-   then `/resume` and select the session. If they want the old copy
-   removed afterward, point them at the `delete-session` skill rather than
-   deleting it here — that keeps destructive deletion in one place with
-   its own confirmation flow.
+8. Report what was copied, per session, and that every original is
+   untouched at its original path. Tell the user how to pick them up:
+   `/resume` from this directory, then select the session. If they want an
+   old copy removed afterward, point them at the `delete-session` skill
+   rather than deleting it here — that keeps destructive deletion in one
+   place with its own confirmation flow.

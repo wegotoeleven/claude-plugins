@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """Delete a Claude Code session and its associated files."""
 
+import argparse
 import json
 import os
 import re
 import shutil
-import sys
 from pathlib import Path
 
 
@@ -15,43 +15,50 @@ def path_to_project_dir(project_path):
 
 def count_history_entries(jsonl_path):
     try:
-        count = sum(1 for line in open(jsonl_path) if line.strip())
-        return count
+        return sum(1 for line in open(jsonl_path) if line.strip())
     except Exception:
         return 0
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith('--')]
-    flags = [a for a in sys.argv[1:] if a.startswith('--')]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('session_id')
+    parser.add_argument('--project-dir', help='absolute path to the ~/.claude/projects/<slug> directory')
+    parser.add_argument('--project-path', help='project working directory to derive the slug from (default: cwd)')
+    parser.add_argument('--dry-run', action='store_true')
+    args = parser.parse_args()
 
-    if len(args) == 1:
-        project_path = os.getcwd()
-        session_id = args[0]
-    elif len(args) == 2:
-        project_path = args[0]
-        session_id = args[1]
+    if args.project_dir:
+        project_dir = Path(args.project_dir)
     else:
-        print(json.dumps({'error': 'Usage: delete_session.py [<project_path>] <session_id> [--dry-run]'}))
-        sys.exit(1)
+        project_path = args.project_path or os.getcwd()
+        project_dir = Path.home() / '.claude' / 'projects' / path_to_project_dir(project_path)
 
-    dry_run = '--dry-run' in flags
-
-    project_dir = Path.home() / '.claude' / 'projects' / path_to_project_dir(project_path)
-    jsonl_file = project_dir / f'{session_id}.jsonl'
-    session_dir = project_dir / session_id
+    jsonl_file = project_dir / f'{args.session_id}.jsonl'
+    session_dir = project_dir / args.session_id
+    claude_home = Path.home() / '.claude'
 
     targets = [
         {'path': str(jsonl_file), 'type': 'file', 'exists': jsonl_file.exists()},
         {'path': str(session_dir), 'type': 'directory', 'exists': session_dir.exists()},
     ]
 
+    # Sidecar data Claude Code keys by session id outside the project's own
+    # ~/.claude/projects/<slug> directory, so it isn't reachable by session_dir above.
+    for sidecar_root in ('file-history', 'session-env', 'tasks'):
+        sidecar_path = claude_home / sidecar_root / args.session_id
+        targets.append({
+            'path': str(sidecar_path),
+            'type': 'directory' if sidecar_path.is_dir() else 'file',
+            'exists': sidecar_path.exists(),
+        })
+
     history_entries = count_history_entries(jsonl_file) if jsonl_file.exists() else 0
 
-    if dry_run:
+    if args.dry_run:
         print(json.dumps({
             'dry_run': True,
-            'session_id': session_id,
+            'session_id': args.session_id,
             'targets': targets,
             'history_entries': history_entries,
         }, indent=2))
@@ -73,7 +80,7 @@ def main():
             errors.append({'path': target['path'], 'error': str(e)})
 
     print(json.dumps({
-        'session_id': session_id,
+        'session_id': args.session_id,
         'deleted': deleted,
         'errors': errors,
     }, indent=2))

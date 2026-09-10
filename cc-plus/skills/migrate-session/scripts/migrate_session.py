@@ -6,10 +6,11 @@ Copies rather than moves: the source transcript is left untouched, so this
 is safe to re-run and the migration can't destroy the original.
 """
 
+import argparse
 import json
+import os
 import re
 import shutil
-import sys
 from pathlib import Path
 
 
@@ -18,29 +19,27 @@ def path_to_project_dir(project_path):
 
 
 def main():
-    args = [a for a in sys.argv[1:] if not a.startswith('--')]
-    flags = [a for a in sys.argv[1:] if a.startswith('--')]
+    parser = argparse.ArgumentParser()
+    parser.add_argument('session_id')
+    parser.add_argument('--old-project-dir', required=True,
+                         help='absolute path to the source ~/.claude/projects/<slug> directory, '
+                              'as reported by list_sessions.py\'s "project_dir" field')
+    parser.add_argument('--new-project-path', default=os.getcwd(),
+                         help='working directory to migrate into (default: cwd)')
+    parser.add_argument('--dry-run', action='store_true')
+    args = parser.parse_args()
 
-    if len(args) != 3:
-        print(json.dumps({
-            'error': 'Usage: migrate_session.py <old_project_path> <new_project_path> <session_id> [--dry-run]',
-        }))
-        sys.exit(1)
+    old_dir = Path(args.old_project_dir)
+    new_dir = Path.home() / '.claude' / 'projects' / path_to_project_dir(args.new_project_path)
 
-    old_project_path, new_project_path, session_id = args
-    dry_run = '--dry-run' in flags
-
-    old_dir = Path.home() / '.claude' / 'projects' / path_to_project_dir(old_project_path)
-    new_dir = Path.home() / '.claude' / 'projects' / path_to_project_dir(new_project_path)
-
-    old_jsonl = old_dir / f'{session_id}.jsonl'
-    old_session_dir = old_dir / session_id
-    new_jsonl = new_dir / f'{session_id}.jsonl'
-    new_session_dir = new_dir / session_id
+    old_jsonl = old_dir / f'{args.session_id}.jsonl'
+    old_session_dir = old_dir / args.session_id
+    new_jsonl = new_dir / f'{args.session_id}.jsonl'
+    new_session_dir = new_dir / args.session_id
 
     if not old_jsonl.exists():
         print(json.dumps({'error': f'Source transcript not found: {old_jsonl}'}))
-        sys.exit(1)
+        raise SystemExit(1)
 
     targets = [
         {
@@ -59,10 +58,10 @@ def main():
         },
     ]
 
-    if dry_run:
+    if args.dry_run:
         print(json.dumps({
             'dry_run': True,
-            'session_id': session_id,
+            'session_id': args.session_id,
             'targets': targets,
         }, indent=2))
         return
@@ -86,11 +85,11 @@ def main():
             errors.append({'path': str(new_session_dir), 'error': str(e)})
 
     print(json.dumps({
-        'session_id': session_id,
+        'session_id': args.session_id,
         'copied': copied,
         'errors': errors,
         'source_untouched': str(old_jsonl),
-        'resume_with': f'cd {new_project_path} && claude',
+        'resume_with': f'cd {args.new_project_path} && claude',
     }, indent=2))
 
 
