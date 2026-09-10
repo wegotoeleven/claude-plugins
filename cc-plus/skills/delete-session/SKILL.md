@@ -38,7 +38,7 @@ allowed-tools:
    ```
    python3 "${CLAUDE_SKILL_DIR}/scripts/delete_session.py" "<session_id>" --project-dir "<project_dir>" --dry-run
    ```
-   Collect the `targets` list from each (only entries where `exists` is true) and the `history_entries` count. Present the combined list to the user, grouped by session so it's clear what belongs to what.
+   Collect the `targets` list from each (only entries where `exists` is true) and the `history_entries` count. `other_copies` lists any other project directories that also hold this same session id (from a prior `migrate-session` copy); when non-empty, the `file-history`/`session-env`/`tasks` sidecar targets carry a `skipped_reason` and will NOT be deleted, since that sidecar data is shared across every copy of the session id and removing it would break the copies you're keeping. Present the combined list to the user, grouped by session so it's clear what belongs to what, and call out any skipped sidecar data and why.
 
 6. Ask the user to confirm using AskUserQuestion: "These are the files that will be deleted across N session(s). Proceed? This cannot be undone."
 
@@ -47,4 +47,4 @@ allowed-tools:
    python3 "${CLAUDE_SKILL_DIR}/scripts/delete_session.py" "<session_id>" --project-dir "<project_dir>"
    ```
 
-8. Report what was deleted, per session. If there were errors, report those too.
+8. Report what was deleted and what was skipped (with reasons), per session. If there were errors, report those too.
