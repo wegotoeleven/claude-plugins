@@ -45,11 +45,11 @@ Gather the following before writing a single word:
    import, API call) and any `test/`, `tests/`, `spec/` directory or test
    scripts defined in manifests.
 9. **Contributing** — existing `CONTRIBUTING` file, branch conventions,
-   PR templates, or issue templates.
+   PR templates, or issue templates, and whether the repo otherwise reads as
+   personal/private (e.g. no stated intent for others to use or fork it)
+   versus intended for outside use.
 10. **License** — read `LICENSE`, `LICENSE.md`, or the license field in
-    manifests, and note whether the repo otherwise reads as personal/private
-    (e.g. no intent for others to use or fork it) versus intended for
-    outside use.
+    manifests.
 11. **Existing docs** — read any `docs/` folder, inline `USAGE`, or
     `CHANGELOG` files that should be cross-referenced.
 12. **Recent git history** — run `git log --oneline -20` to understand what
@@ -119,13 +119,11 @@ issues.
 
 ## License
 
-State the licence name and link to the LICENSE file, e.g. `Distributed
-under the MIT License. See [LICENSE](LICENSE) for details.` If the repo
-is clearly personal/private (no stated intent for others to use or fork
-it), omit this section entirely rather than noting the absence of a
-license. Otherwise, if no license file or field exists anywhere in the
-repo, say so plainly (e.g. "No license is specified.") rather than
-guessing one.
+Always include this section, regardless of whether the repo is
+personal/private. State the licence name and link to the LICENSE file, e.g.
+`Distributed under the MIT License. See [LICENSE](LICENSE) for details.` If
+no license file or field exists anywhere in the repo, say so plainly (e.g.
+"No license is specified.") rather than guessing one.
 ```
 
 ## Writing rules
@@ -147,9 +145,9 @@ guessing one.
 - Active voice, present tense ("Run `make build`", not "You can run…").
 - Do not invent features, commands, config keys, or motivation that do not
   exist in the repo. If something is unclear, keep that section brief and
-  factual rather than guess — the License section is the one exception:
-  when it's included, it must always state something explicit, even if
-  that's "no license specified".
+  factual rather than guess — the License section is the one exception: it
+  is never omitted and must always state something explicit, even if that's
+  "no license specified".
 - Keep the tone neutral and technical — avoid marketing language.
 
 ## Process

@@ -13,7 +13,7 @@ There is no build step, package manager, or compiled output — the repo is plai
 
 ## Conventions
 
-- Bump the owning plugin's `version` (minor) in its `.claude-plugin/plugin.json` whenever a skill is added or its behavior changes — every skill-adding commit in this repo's history pairs with a version bump (e.g. `fb13c48` added `migrate-session` and bumped `cc-plus` 1.0.0 → 1.1.0).
+- Bump the owning plugin's `version` in its `.claude-plugin/plugin.json` whenever a skill is added or its behavior changes: minor for a new skill or a new/changed capability within an existing skill, patch for a smaller behavior tweak or clarification. Every skill-adding commit in this repo's history pairs with a version bump (e.g. `fb13c48` added `migrate-session` and bumped `cc-plus` 1.0.0 → 1.1.0).
 - Adding a skill to an *existing* plugin needs no marketplace change — skills are auto-discovered from the plugin's `skills/` directory. Adding a brand-new *plugin* requires a new entry in `.claude-plugin/marketplace.json` at the repo root.
 - `SKILL.md` frontmatter conventions observed across this repo: the `name` field matches the skill's directory name; `description` states what the skill does plus the phrases that should trigger it; `user-invocable: true` marks skills meant to be run directly as `/plugin:skill`; `argument-hint` documents expected CLI-style args; `allowed-tools` scopes which tools a skill's steps may call (see `cc-plus/skills/delete-session/SKILL.md` for an example restricting `Bash` to specific scripts).
 
