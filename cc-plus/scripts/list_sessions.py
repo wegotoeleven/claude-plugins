@@ -31,8 +31,13 @@ def format_timestamp(ts):
         return ts[:16]
 
 
+# Slash commands are stored as <command-name>/foo</command-name>; /resume shows them as "/foo"
+COMMAND_NAME_RE = re.compile(r'<command-name>(.*?)</command-name>', re.S)
+
+
 def get_session_info(jsonl_path):
     custom_title = None
+    ai_title = None
     slug = None
     cwd = None
     first_timestamp = None
@@ -59,14 +64,22 @@ def get_session_info(jsonl_path):
                 if obj.get('type') == 'custom-title' and obj.get('customTitle'):
                     custom_title = obj['customTitle']
 
+                # Claude Code's auto-generated title, shown by /resume when no custom title is set
+                if obj.get('type') == 'ai-title' and obj.get('aiTitle'):
+                    ai_title = obj['aiTitle']
+
                 if not slug and obj.get('slug'):
                     slug = obj['slug']
 
                 if (first_user_message is None
                         and obj.get('type') == 'user'
+                        and not obj.get('isMeta')  # e.g. the <local-command-caveat> wrapper
                         and not obj.get('toolUseResult')):
                     content = obj.get('message', {}).get('content', '')
-                    if isinstance(content, str) and content.strip():
+                    command = COMMAND_NAME_RE.search(content) if isinstance(content, str) else None
+                    if command:
+                        first_user_message = command.group(1).strip()
+                    elif isinstance(content, str) and content.strip():
                         first_user_message = content.strip()[:100]
                     elif isinstance(content, list):
                         for block in content:
@@ -80,6 +93,7 @@ def get_session_info(jsonl_path):
 
     return {
         'custom_title': custom_title,
+        'ai_title': ai_title,
         'slug': slug,
         'cwd': cwd,
         'first_timestamp': first_timestamp,
@@ -98,7 +112,7 @@ def scan_project_dir(project_dir):
         info = get_session_info(jsonl_file)
         sessions.append({
             'session_id': jsonl_file.stem,
-            'display': info['custom_title'] or info['slug'] or info['first_user_message'] or jsonl_file.stem,
+            'display': info['custom_title'] or info['ai_title'] or info['slug'] or info['first_user_message'] or jsonl_file.stem,
             'created': format_timestamp(info['first_timestamp']),
             'last_edited': format_timestamp(info['last_timestamp']),
             'created_raw': info['first_timestamp'] or '',
