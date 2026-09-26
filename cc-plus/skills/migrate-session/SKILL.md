@@ -34,7 +34,7 @@ session afterward.
 ## Steps
 
 1. List every session on the machine using the script shared with
-   `delete-session`:
+   `delete-session` and `list-sessions`:
    ```
    python3 "${CLAUDE_SKILL_DIR}/../../scripts/list_sessions.py" --all
    ```

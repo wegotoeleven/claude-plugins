@@ -6,7 +6,7 @@ A personal Claude Code plugin marketplace of skills for session management, repo
 
 This repository is a Claude Code plugin marketplace, registered at `.claude-plugin/marketplace.json`. It bundles three plugins, each a self-contained set of skills:
 
-- **cc-plus** — quality-of-life enhancements for Claude Code itself: deleting and migrating session history, and re-explaining a response in plain terms.
+- **cc-plus** — quality-of-life enhancements for Claude Code itself: listing, deleting and migrating session history, and re-explaining a response in plain terms.
 - **repo-kit** — skills for fleshing out and maintaining git repositories: generating `README.md` and `AGENTS.md` files, and tidying bash scripts to a house style.
 - **blog-kit** — turns rough notes into a finished blog post and publishes it to a Hugo blog repo.
 
@@ -66,6 +66,7 @@ Each skill is invoked as a slash command scoped to its plugin, e.g. `/<plugin>:<
 | Skill | Description |
 |---|---|
 | `delete-session` | Selectively delete Claude Code session history files from disk |
+| `list-sessions` | List every Claude Code session on this machine with the full path to its transcript |
 | `hol-up` | Re-explain the last response in plain terms, optionally tailored to a named audience |
 | `migrate-session` | Copy a session's history into a different project directory so it shows up in `/resume` |
 
@@ -73,6 +74,7 @@ Each skill is invoked as a slash command scoped to its plugin, e.g. `/<plugin>:<
 /cc-plus:delete-session
 /cc-plus:hol-up
 /cc-plus:hol-up for my manager
+/cc-plus:list-sessions
 /cc-plus:migrate-session
 ```
 

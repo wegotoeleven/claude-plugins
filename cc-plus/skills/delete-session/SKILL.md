@@ -16,7 +16,7 @@ allowed-tools:
    - "This folder" — sessions belonging to the current project only.
    - "All sessions" — every session across every project on this machine.
 
-2. List sessions, using the shared script (also used by `migrate-session`):
+2. List sessions, using the shared script (also used by `list-sessions` and `migrate-session`):
    - This folder:
      ```
      python3 "${CLAUDE_SKILL_DIR}/../../scripts/list_sessions.py"

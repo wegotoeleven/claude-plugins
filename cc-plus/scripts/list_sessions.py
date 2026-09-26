@@ -104,6 +104,7 @@ def scan_project_dir(project_dir):
             'created_raw': info['first_timestamp'] or '',
             'folder': info['cwd'] or str(project_dir),
             'project_dir': str(project_dir),
+            'transcript_path': str(jsonl_file),
         })
     return sessions, folder_size_bytes
 

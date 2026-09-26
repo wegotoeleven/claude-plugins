@@ -25,7 +25,7 @@ Each top-level directory (`cc-plus`, `repo-kit`, `blog-kit`) is a plugin contain
 - `.claude-plugin/plugin.json` — `name`, `version`, `description`, `author`, `keywords`.
 - `skills/<skill-name>/SKILL.md` — one directory per skill: YAML frontmatter followed by the skill's instructions. Some skills also ship a `scripts/` directory (e.g. `cc-plus/skills/delete-session/scripts/`).
 
-`cc-plus/scripts/list_sessions.py` is shared by both session-management skills. Keep shared helpers inside their owning plugin so they stay available once installed.
+`cc-plus/scripts/list_sessions.py` is shared by all three session-management skills (`list-sessions`, `delete-session`, `migrate-session`). Keep shared helpers inside their owning plugin so they stay available once installed.
 
 ## Code Style
 
@@ -44,7 +44,7 @@ No automated tests or CI. Reload after edits and invoke the changed skill to con
 /cc-plus:hol-up
 ```
 
-Preview session-script changes with each script's `--dry-run` flag before any real deletion or migration. Check both callers when changing `list_sessions.py`. Report any interactive check that could not be run.
+Preview session-script changes with each script's `--dry-run` flag before any real deletion or migration. Check all three callers when changing `list_sessions.py`. Report any interactive check that could not be run.
 
 ## PR Instructions
 
